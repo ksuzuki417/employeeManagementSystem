@@ -82,6 +82,16 @@ function start() {
     });
 }
 
+//Displaying all departments
+function allDepartments(){
+  console.log("Listing all departments...");
+  connection.query("SELECT * FROM departments", function(err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  })
+}
+
 //Displaying all employees
 function allEmployees() {
   console.log("Listing all employees...");
@@ -91,4 +101,3 @@ function allEmployees() {
     start();
   });
 };
-

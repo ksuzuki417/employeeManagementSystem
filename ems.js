@@ -1,47 +1,47 @@
 const mysql = require("mysql");
-const inquirer = require("inquire");
+const inquirer = require("inquirer");
 const consoleTable = require("console.table");
-const { allowedNodeEnvironmentFlags } = require("process");
-const { ADDRGETNETWORKPARAMS } = require("dns");
-const dotEnv = require("dotenv").config();
+require("dotenv").config();
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
-    host: "localhost",
+  host: "localhost",
   
     // Your port; if not 3306
-    port: 3306,
+  port: 3306,
   
     // Your username
-    user: "root",
+  user: "root",
   
     // Your password
-    password: process.env.MYSQLPW,
-    database: "greatBay_DB"
-  });
+  password: process.env.MYSQLPW,
+  database: "employees_DB"
+});
   
   // connect to the mysql server and sql database
-  connection.connect(function(err) {
-    if (err) throw err;
+connection.connect(function(err) {
+  if (err) throw err;
     // run the start function after the connection is made to prompt the user
-    start();
-  });
+  start();
+});
 
-  function start() {
-    inquirer.prompt({
-      type: "list",
-      message: "What would you like to do?",
-      name: "action",
-      choices: [
-        "View all departments",
-        "View all roles",
-        "View all employees",
-        "Add a department",
-        "Add a role",
-        "Add an employee",
-        "Update employee roles",
-        "Quit"
-      ]
+//Initial action function
+function start() {
+  inquirer
+  .prompt({
+    type: "list",
+    message: "What would you like to do?",
+    name: "action",
+    choices: [
+      "View all departments",
+      "View all roles",
+      "View all employees",
+      "Add a department",
+      "Add a role",
+      "Add an employee",
+      "Update employee roles",
+      "Quit"
+    ]
     })
     .then(function(answer) {
       console.log(answer.action);
@@ -75,8 +75,20 @@ var connection = mysql.createConnection({
           break;
 
         case "Quit":
-          quit();
+          console.log("Work is complete!");
+          connection.end();  
           break;
       }
     });
-  }
+}
+
+//Displaying all employees
+function allEmployees() {
+  console.log("Listing all employees...");
+  connection.query("SELECT * FROM employees", function(err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
+

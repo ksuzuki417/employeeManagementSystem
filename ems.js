@@ -111,3 +111,64 @@ function allEmployees() {
     start();
   });
 };
+
+//Adding a department
+function addDept() {
+  console.log("Adding a new department...");
+  inquirer.prompt([
+    {
+      type: "input",
+      message: "Enter a new department name",
+      name: "newDept"
+    },
+  ])
+  .then(function(res) {
+    connection.query("INSERT INTO departments (dept_name) VALUES ?", [res.newDept], 
+    function(err) {
+      if (err) throw err;
+      console.table("A new department is added successfully!");
+      start();
+    })
+  })
+}
+
+//Adding a new role
+function addRole() {
+  console.log("Adding a new role...");
+  inquirer.prompt([
+    {
+      type: "input",
+      message: "Enter a new role",
+      name: "newRole"
+    },
+    {
+      type: "input",
+      message: "Enter the salary",
+      name: "salary",
+      validate: function(value) {
+        if (isNaN(value) === false) {
+          return true;
+        }
+        return false;
+      }
+    },
+    {
+      type: "number",
+      message: "Enter the department ID",
+      name: "deptID"
+    }
+  ])
+  .then(function(res) {
+    connection.query("INSERT INTO roles SET ?",
+    {
+      title: res.newRole,
+      salary: res.salary || 0,
+      dept_id: res.deptID
+    },
+    function(err) {
+      if (err) throw err;
+      console.table("A new role added successfully!")
+      start();
+    })
+  })
+}

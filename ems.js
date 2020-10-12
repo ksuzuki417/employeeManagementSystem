@@ -80,7 +80,7 @@ function start() {
           break;
       }
     });
-}
+};
 
 //Displaying all departments
 function allDepartments(){
@@ -89,8 +89,18 @@ function allDepartments(){
     if (err) throw err;
     console.table(res);
     start();
-  })
-}
+  });
+};
+
+//Displaying all roles
+function allRoles() {
+  console.log("Listing all roles...");
+  connection.query("SELECT * FROM roles", function(err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  });
+};
 
 //Displaying all employees
 function allEmployees() {

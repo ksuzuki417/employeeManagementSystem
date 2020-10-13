@@ -174,3 +174,66 @@ function addRole() {
 }
 
 // Adding an employee
+function addEmp() {
+  console.log("Adding an employee...");
+  inquirer.prompt ([
+    {
+      type: "input",
+      message: "Enter first name",
+      name: "first"
+    },
+    {
+      type: "input",
+      message: "Enter last name",
+      name: "last"
+    },
+    {
+      type: "number",
+      message: "Enter Role ID",
+      name: "roleID"
+    },
+    /*{
+      type: "number",
+      message: "Enter the employee ID of the manager. If employee has no manager, leave it blank.",
+      name: "managerID",
+    }*/
+  ])
+  .then(function(res) {
+    connection.query(
+      "INSERT INTO employees SET ?",
+      {
+        first_name: res.first,
+        last_name: res.last,
+        role_id: res.roleID,
+        //manager_id: res.managerID
+      },
+      function(err) {
+        if (err) throw err;
+        console.table("A new employee is successfully added!");
+        start();
+      }
+  );
+  });
+}
+
+// update employee info
+function update() {
+  connection.query("SELECT * FROM employees", function(err, results) {
+    if (err) throw err;
+
+    inquirer.prompt([
+      {
+        name: "empName",
+        type: "rawlist",
+        choices: function() {
+          var empList = [];
+          for (let i = 0; i < results.length; i++) {
+            empList.push(results[i].id);
+          }
+          return empList;
+        },
+        message: "Who would you like to update?"
+      },
+    ])
+  })
+}

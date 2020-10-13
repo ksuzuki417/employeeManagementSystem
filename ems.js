@@ -123,7 +123,7 @@ function addDept() {
     },
   ])
   .then(function(res) {
-    connection.query("INSERT INTO departments (dept_name) VALUES ?", [res.newDept], 
+    connection.query("INSERT INTO departments (dept_name) VALUES (?)", (res.newDept), 
     function(err) {
       if (err) throw err;
       console.table("A new department is added successfully!");
@@ -172,3 +172,5 @@ function addRole() {
     })
   })
 }
+
+// Adding an employee

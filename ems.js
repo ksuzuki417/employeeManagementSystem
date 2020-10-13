@@ -228,12 +228,24 @@ function update() {
         choices: function() {
           var empList = [];
           for (let i = 0; i < results.length; i++) {
-            empList.push(results[i].id);
+            empList.push(results[i].first_name + results[i].last_name);
           }
           return empList;
         },
         message: "Who would you like to update?"
       },
+      {
+        name: "choices",
+        type: "rawlist",
+        choices: function() {
+          var choiceArray = [];
+          for (let i = 0; i < results.length; i++) {
+            choiceArray.push(results[i].role_id);
+          }
+          return choiceArray;
+        },
+        message: "Select a new role"
+      }
     ])
   })
 }

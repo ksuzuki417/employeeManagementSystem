@@ -29,3 +29,11 @@ manager_id INTEGER,
 FOREIGN KEY (manager_id) REFERENCES employees(id)
 );
 
+INSERT INTO departments (dept_name)
+VALUES ("Associate Services");
+
+SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name, CONCAT(employees.first_name, ' ', employees.last_name) AS manager  
+FROM employees 
+LEFT JOIN roles ON role_id = roles.id
+LEFT JOIN departments on roles.dept_id = departments.id
+LEFT JOIN employees manager ON manager.id = employees.manager_id

@@ -40,6 +40,7 @@ function start() {
       "Add a role",
       "Add an employee",
       "Update employee roles",
+      "Remove an employee",
       "Quit"
     ]
     })
@@ -73,6 +74,10 @@ function start() {
         case "Update employee roles":
           update();
           break;
+        
+        case "Remove an employee":
+          remove();
+          break;
 
         case "Quit":
           console.log("Work is complete!");
@@ -105,7 +110,7 @@ function allRoles() {
 //Displaying all employees
 function allEmployees() {
   console.log("Listing all employees...");
-  connection.query("SELECT * FROM employees", function(err, res) {
+  connection.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name AS department, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employees LEFT JOIN roles ON role_id = roles.id LEFT JOIN departments on roles.dept_id = departments.id LEFT JOIN employees manager ON manager.id = employees.manager_id", function(err, res) {
     if (err) throw err;
     console.table(res);
     start();
@@ -193,7 +198,7 @@ function addEmp() {
       name: "roleID"
     },
     /*{
-      type: "number",
+      type: "input",
       message: "Enter the employee ID of the manager. If employee has no manager, leave it blank.",
       name: "managerID",
     }*/
@@ -216,22 +221,20 @@ function addEmp() {
   });
 }
 
-// update employee info
+// update employee role
 function update() {
-  connection.query("SELECT * FROM employees", function(err, results) {
+  connection.query("SELECT * FROM employees", function(err, res) {
     if (err) throw err;
+    var empList = [];
+          for (let i = 0; i < res.length; i++) {
+            empList.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name + " " + res[i].title);
+          }
 
     inquirer.prompt([
       {
         name: "empName",
         type: "rawlist",
-        choices: function() {
-          var empList = [];
-          for (let i = 0; i < results.length; i++) {
-            empList.push(results[i].first_name + results[i].last_name);
-          }
-          return empList;
-        },
+        choices: empList,
         message: "Who would you like to update?"
       },
       {
@@ -239,13 +242,52 @@ function update() {
         type: "rawlist",
         choices: function() {
           var choiceArray = [];
-          for (let i = 0; i < results.length; i++) {
-            choiceArray.push(results[i].role_id);
+          for (let i = 0; i < res.length; i++) {
+            choiceArray.push(res[i].role_id);
           }
           return choiceArray;
         },
         message: "Select a new role"
-      }
+      },
     ])
+      .then(function(res){
+        connection.query(`UPDATE employees SET role_id = ${res.choices} WHERE id = ${res.empList}`,
+        function(err) {
+        if (err) throw err;
+        console.table("An employee role is successfully updated!");
+        start();
+        });
+    })    
   })
 }
+
+// Remove employee
+function remove() {
+  console.log("Removing employee...");
+  connection.query("SELECT * FROM employees", function(err, res) {
+    if(err) throw err;
+
+    inquirer.prompt(
+      {
+        name: "removeEmp",
+        type: "rawlist",
+        choices: function() {
+          var empList = [];
+          for (let i = 0; i < res.length; i++) {
+            empList.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name);
+          }
+          return empList;
+        },
+        message: "Who would you like to remove?"
+    })
+    .then(function(res){
+      console.log(res.id);
+      connection.query(
+        `DELETE FROM employees WHERE id = ${res.empList}` , function(err, res) {
+          if(err) throw err;
+          console.log("employee removed")
+        })
+        allEmployees();
+    })
+  });
+};

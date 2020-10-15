@@ -132,7 +132,7 @@ function addDept() {
     function(err) {
       if (err) throw err;
       console.table("A new department is added successfully!");
-      start();
+      allDepartments();
     })
   })
 }
@@ -173,7 +173,7 @@ function addRole() {
     function(err) {
       if (err) throw err;
       console.table("A new role added successfully!")
-      start();
+      allRoles();
     })
   })
 }
@@ -215,7 +215,7 @@ function addEmp() {
       function(err) {
         if (err) throw err;
         console.table("A new employee is successfully added!");
-        start();
+        allEmployees();
       }
   );
   });
@@ -223,11 +223,11 @@ function addEmp() {
 
 // update employee role
 function update() {
-  connection.query("SELECT * FROM employees", function(err, res) {
+  var empList = [];
+  connection.query("SELECT employees.id, employees.first_name, employees.last_name FROM employees", function(err, res) {
     if (err) throw err;
-    var empList = [];
           for (let i = 0; i < res.length; i++) {
-            empList.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name + " " + res[i].title);
+            empList.push(res[i].id);
           }
 
     inquirer.prompt([
@@ -238,24 +238,17 @@ function update() {
         message: "Who would you like to update?"
       },
       {
-        name: "choices",
-        type: "rawlist",
-        choices: function() {
-          var choiceArray = [];
-          for (let i = 0; i < res.length; i++) {
-            choiceArray.push(res[i].role_id);
-          }
-          return choiceArray;
-        },
-        message: "Select a new role"
+        name: "newRole",
+        type: "input",
+        message: "Enter the new role ID"
       },
     ])
       .then(function(res){
-        connection.query(`UPDATE employees SET role_id = ${res.choices} WHERE id = ${res.empList}`,
+        connection.query(`UPDATE employees SET role_id = ${res.newRole} WHERE id = ${res.empName}`,
         function(err) {
         if (err) throw err;
         console.table("An employee role is successfully updated!");
-        start();
+        allEmployees();
         });
     })    
   })
@@ -274,18 +267,22 @@ function remove() {
         choices: function() {
           var empList = [];
           for (let i = 0; i < res.length; i++) {
-            empList.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name);
+            empList.push(res[i].id);
           }
           return empList;
         },
         message: "Who would you like to remove?"
     })
     .then(function(res){
-      console.log(res.id);
+      console.log(res.removeEmp);
       connection.query(
-        `DELETE FROM employees WHERE id = ${res.empList}` , function(err, res) {
+        "DELETE FROM employees WHERE ?", 
+        { 
+          id: res.removeEmp
+        },
+        function(err, res) {
           if(err) throw err;
-          console.log("employee removed")
+          console.table("employee removed")
         })
         allEmployees();
     })

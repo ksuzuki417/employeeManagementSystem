@@ -1,39 +1,31 @@
-DROP DATABASE IF EXISTS employees_db;
-CREATE DATABASE employees_db;
+INSERT INTO departments (dept_name) VALUES ("Staff");
+INSERT INTO departments (dept_name) VALUES ("Offence");
+INSERT INTO departments (dept_name) VALUES ("Mid Field");
+INSERT INTO departments (dept_name) VALUES ("Defence");
 
-USE employees_db;
+SELECT * FROM departments;
 
-CREATE TABLE departments (
-id INTEGER AUTO_INCREMENT NOT NULL,
-PRIMARY KEY (id),
-dept_name VARCHAR(30)
-);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Head Coach", 300000, 4);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Forward", 180000, 5);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Wing", 170000 , 5);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Center Half", 140000, 6);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Side Half", 150000, 6);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Center Back", 130000, 7);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Side Back", 140000, 7);
+INSERT INTO roles (title, salary, dept_id) VALUES ("Goal Keeper", 160000, 7);
 
-CREATE TABLE roles (
-id INTEGER AUTO_INCREMENT NOT NULL,
-PRIMARY KEY (id),
-title VARCHAR(30),
-salary DECIMAL,
-dept_id INTEGER NOT NULL,
-FOREIGN KEY (dept_id) REFERENCES departments(id)
-);
+SELECT * FROM roles;
+SELECT * FROM employees;
 
-CREATE TABLE employees (
-id INTEGER AUTO_INCREMENT NOT NULL,
-PRIMARY KEY (id),
-first_name VARCHAR(30),
-last_name VARCHAR(30),
-role_id INTEGER NOT NULL,
-FOREIGN KEY (role_id) REFERENCES roles(id),
-manager_id INTEGER,
-FOREIGN KEY (manager_id) REFERENCES employees(id)
-);
-
-INSERT INTO departments (dept_name)
-VALUES ("Associate Services");
-
-SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name, CONCAT(employees.first_name, ' ', employees.last_name) AS manager  
-FROM employees 
-LEFT JOIN roles ON role_id = roles.id
-LEFT JOIN departments on roles.dept_id = departments.id
-LEFT JOIN employees manager ON manager.id = employees.manager_id
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Jurgen", "Klopp", 8, null);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Roberto", "Firmino", 9, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Sadio", "Mane", 10, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Mohamed", "Salah", 10, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Thiago", "Alcantara", 11, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Naby", "Keita", 11,5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Jordan", "Henderson", 11, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Takumi", "Minamino", 12, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Virgil", "van Dijk", 13, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Joe", "Gomez", 13, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Trent", "Alexander-Arnold", 14, 5);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ("Andy", "Robertson", 14, 5);
